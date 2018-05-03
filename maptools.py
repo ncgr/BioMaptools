@@ -70,6 +70,22 @@ def get_genetic_markers(markers):
     return genetic_markers
 
 
+def markers_blastn(markers, reference, blast_path):
+    '''Runs a BLASTn against reference using maxtargets 10 culling_limit 10
+
+       using the blastn at blast_path
+
+       outputs results in outfmt6 to <markers>.cull10_targets10_fmt6.tab
+    '''
+    cmd = ('{}/blastn -db {} -query {}'.format(blast_path, reference, markers)+ 
+           ' -out {}.cull10_targets10_fmt6.tab'.format(markers) + 
+           ' -outfmt 6 -culling_limit 10 -max_target_seqs 10 -num_threads 2')
+    exit_val = subprocess.check_call(cmd, shell=True)
+    if exit_val:
+        print('Blastn process exited with non-zero value: {}'.format(exit_val))
+        sys.exit(1)
+
+
 def format_for_allmaps(markers_gm, markers_phys):
     '''Accepts a tab file of genetic marker labels, their LG and their
 
