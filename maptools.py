@@ -48,6 +48,62 @@ def get_seqio_record(seq_handle):
             yield record  # yield each record as it is iterated
 
 
+def get_genetic_markers(markers):
+    '''Accepts a tab file of genetic markers, their LGs and their genetic
+
+       distance.
+
+       Returns a dictionary with marker id as key and a dict as value.
+    '''
+    genetic_markers = {}
+    fh = return_filehandle(markers)  # get filehandle for markers file
+    with fh as mopen:
+        for line in mopen:
+            line = line.rstrip()
+            if not line or line.startswith('#') or line.startswith('VARIANT'):
+                continue  # skip comments and headers
+            fields = line.split('\t')
+            if len(fields) < 3:  # skip empty or unassigned
+                continue
+            genetic_markers[fields[0]] = {'lg': fields[1], 
+                                          'distance': fields[2]}
+    return genetic_markers
+
+
+def format_for_allmaps(markers_gm, markers_phys):
+    '''Accepts a tab file of genetic marker labels, their LG and their
+
+       genetic distance.
+
+       Loads this into genetic_markers dict.
+
+       Also accepts a physical position file parsed from filter_marker_blastn
+
+       these will be unioned and an AllMaps CSV file will be produced.
+    '''
+    markers_gm = os.path.abspath(markers_gm)
+    markers_phys = os.path.abspath(markers_phys)
+    genetic_markers = get_genetic_markers(markers_gm)
+    fh = return_filehandle(markers_phys)
+    with fh as popen:
+        for line in popen:
+            line = line.rstrip()
+            if not line or line.startswith('#') or line.startswith('VARIANT'):
+                continue  # skip comments and headers
+            fields = line.split('\t')
+            if len(fields) < 3:  # skip empty or unassigned
+                continue
+            if not genetic_markers.get(fields[0]):  # skip if no distance etc
+                continue
+            marker_id = fields[0]
+            ref = fields[1]
+            position = fields[2]
+            lg = genetic_markers[marker_id]['lg']
+            genetic_distance = genetic_markers[marker_id]['distance']
+            output = '{},{},{},{}'.format(ref, position, lg, genetic_distance)
+            print(output)  # print output line formatted above for allmaps
+
+
 def get_sequence_lengths(fasta):
     '''Gets sequence lengths and returns dictionary 
     

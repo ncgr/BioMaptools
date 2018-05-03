@@ -2,7 +2,6 @@
 
 import sys
 import argparse
-import subprocess
 from glob import glob
 from maptools import markers_tab_to_fasta
 parser= argparse.ArgumentParser(description='''

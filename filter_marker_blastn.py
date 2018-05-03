@@ -3,8 +3,6 @@
 import os
 import sys
 import argparse
-import subprocess
-from glob import glob
 from maptools import filter_markers_blastn
 parser= argparse.ArgumentParser(description='''
 
@@ -50,5 +48,3 @@ if __name__ == '__main__':
     reference = os.path.abspath(args.reference)
     filter_markers_blastn(alignments, reference, outfile, args.min_markers,
                           args.max_targets)
-
-#        blast_markers()
