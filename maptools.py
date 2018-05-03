@@ -200,6 +200,8 @@ def filter_markers_blastn(alignments, ref, outfile, min_markers, max_targets):
         passing_refs[passing_markers[query]['ref']] += 1
     for query in passing_markers:  # now iterate through passing and get refs
         ref = passing_markers[query]['ref']
+        if not ref:  # if marker passed but ref was too ambiguous
+            continue
         if passing_refs[ref] >= min_markers:  # check min markers
             position = passing_markers[query]['start']
             output_me = '{}\t{}\t{}'.format(query, ref, position)
