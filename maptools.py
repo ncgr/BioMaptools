@@ -176,6 +176,7 @@ def filter_markers_blastn(alignments, ref, outfile, min_markers, max_targets):
     alignments = os.path.abspath(alignments)
     ref = os.path.abspath(ref)
     outfile = os.path.abspath(outfile)
+    outfile_handle = open(outfile, 'w')
     marker_alignments = populate_marker_alignments(alignments, ref)  # markers
     passing_markers = {}
     passing_refs = {}
@@ -221,7 +222,9 @@ def filter_markers_blastn(alignments, ref, outfile, min_markers, max_targets):
         if passing_refs[ref] >= min_markers:  # check min markers
             position = passing_markers[query]['start']
             output_me = '{}\t{}\t{}'.format(query, ref, position)
+            outfile_handle.write(output_me + '\n')
             print(output_me)
+    outfile_handle.close()
 
 
 def markers_tab_to_fasta(markers):
